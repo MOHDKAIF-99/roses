@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f79b86">
+<title>A Garden For You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style>
+/* Layout: heart-shaped tree of blossoms in the upper half, a glass message card in the middle,
+   hills with lavender and roses across the bottom. Page 2 = sunset glow. */
+:root {
+  --sky-top: #ffd6ac;
+  --sky-mid: #f89e88;
+  --sky-low: #d9627c;
+  --plum: #5b2a52;
+  --ink: #4a2038;
+  --card: rgba(255, 243, 233, .7);
+  --display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --body: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; }
+body {
+  background:
+    radial-gradient(70% 45% at 50% 80%, rgba(255, 240, 190, .95) 0%, rgba(255, 220, 160, 0) 70%),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 48%, var(--sky-low) 100%);
+  color: var(--ink);
+  font-family: var(--body);
+  -webkit-tap-highlight-color: transparent;
+}
+canvas { position: fixed; inset: 0; display: block; }
+#front { z-index: 2; }
+#back { z-index: 1; }
+
+.veil { position: fixed; inset: 0; z-index: 9; pointer-events: none; background: radial-gradient(circle at 50% 50%, #fff4d6 0%, #ffd9a0 40%, #f7a27c 100%); animation: veil 1.4s ease-out forwards; }
+@keyframes veil { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+.back-link { position: fixed; z-index: 6; top: calc(env(safe-area-inset-top, 0px) + 14px); left: 16px; padding: 8px 14px; border-radius: 999px; background: rgba(255, 244, 234, .6); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: var(--ink); text-decoration: none; font-weight: 700; font-size: .85rem; }
+.back-link:focus-visible, .next:focus-visible { outline: 3px solid var(--plum); outline-offset: 3px; }
+
+.card {
+  position: fixed; z-index: 5; left: 50%; transform: translateX(-50%);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 24%);
+  width: min(calc(100vw - 48px), 420px);
+  padding: 14px 20px;
+  border-radius: 24px;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, .7);
+  box-shadow: 0 24px 50px -18px rgba(91, 42, 82, .55);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  text-align: center;
+}
+.eyebrow { font-size: .7rem; letter-spacing: .26em; text-transform: uppercase; font-weight: 700; color: #a2425f; margin: 0; }
+.msg { font-family: var(--display); font-style: italic; font-weight: 600; font-size: clamp(1.15rem, 4vw, 1.4rem); line-height: 1.3; margin: 0; min-height: 3.9em; display: flex; align-items: center; justify-content: center; text-wrap: balance; transition: opacity .35s ease, transform .35s ease; }
+.msg.out { opacity: 0; transform: translateY(8px); }
+.sign { font-family: var(--display); font-weight: 600; font-size: 1.25rem; margin: 0; color: #a2425f; }
+.hide { display: none !important; }
+.dots { display: flex; gap: 7px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(162, 66, 95, .28); transition: background .3s, transform .3s; }
+.dots i.on { background: #a2425f; transform: scale(1.25); }
+.next { border: 0; cursor: pointer; min-height: 44px; padding: 0 22px; border-radius: 999px; background: linear-gradient(135deg, #ff9bb0, #f0707f); color: #3a1230; font-weight: 700; font-family: var(--body); font-size: .95rem; box-shadow: 0 10px 20px -8px rgba(217, 98, 124, .8); transition: transform .2s; }
+.next:hover { transform: translateY(-1px) scale(1.03); }
+.next:active { transform: scale(.96); }
+
+.hint { position: fixed; z-index: 4; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); padding: 8px 16px; border-radius: 999px; background: rgba(255, 244, 234, .72); font-size: .82rem; font-weight: 700; color: var(--ink); pointer-events: none; white-space: nowrap; transition: opacity .6s; }
+.hint.gone { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .veil { animation-duration: .01s; }
+  .msg { transition: none; }
+}
+</style>
+</head>
+<body>
+<canvas id="back" aria-hidden="true"></canvas>
+<canvas id="front" aria-hidden="true"></canvas>
+
+<a class="back-link" href="index1.html">&larr; back</a>
+
+<section class="card flex flex-col gap-2" id="card" aria-label="A message for you">
+  <p id="msg" class="msg" aria-live="polite"></p>
+  <div class="flex items-center justify-between gap-3">
+    <div class="flex items-center" style="min-height:44px">
+      <div id="dots" class="dots" aria-hidden="true"></div>
+      <p id="sign" class="sign hide"></p>
+    </div>
+    <button id="next" class="next" type="button">Next</button>
+  </div>
+</section>
+
+<div id="hint" class="hint">tap the garden to plant a flower</div>
+<div class="veil" aria-hidden="true"></div>
+
+<script>
+(function () {
+  var MESSAGES = [
+    'Some people make a room feel warmer just by walking in. You are one of them.',
+    'Every flower here is a small thank you for how kindly you treat the people around you.',
+    'On heavy days, I hope you remember how much light you bring into other people’s lives.',
+    'May your days be soft, your evenings golden, and your heart as full as this garden.',
+    'There is room for one more flower here. Tap anywhere and plant it.'
+  ];
+  var SIGN = '— Mohd Kaif';
+
+  /* message card */
+  var msgEl = document.getElementById('msg');
+  var signEl = document.getElementById('sign');
+  var dotsEl = document.getElementById('dots');
+  var nextBtn = document.getElementById('next');
+  var idx = 0;
+  MESSAGES.forEach(function () { dotsEl.appendChild(document.createElement('i')); });
+
+  function show(i, instant) {
+    var last = i === MESSAGES.length - 1;
+    function apply() {
+      msgEl.textContent = MESSAGES[i];
+      signEl.textContent = last ? SIGN : '';
+      signEl.classList.toggle('hide', !last);
+      dotsEl.classList.toggle('hide', last);
+      nextBtn.textContent = last ? 'Read again' : 'Next';
+      Array.prototype.forEach.call(dotsEl.children, function (d, k) { d.classList.toggle('on', k === i); });
+      msgEl.classList.remove('out');
+    }
+    if (instant) { apply(); return; }
+    msgEl.classList.add('out');
+    setTimeout(apply, 330);
+  }
+  nextBtn.addEventListener('click', function () { idx = (idx + 1) % MESSAGES.length; show(idx); });
+  show(0, true);
+
+  /* garden */
+  var back = document.getElementById('back'), front = document.getElementById('front');
+  var bctx = back.getContext('2d'), fctx = front.getContext('2d');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var W = 0, H = 0, dpr = 1, groundY = 0, cx = 0, cy = 0, cw = 0, K = 1;
+  var rand, hearts = [], progress = 0, items = [], planted = [], petals = [], bursts = [], twinkles = [];
+  var kinds = ['rose', 'lav', 'daisy'], kindIdx = 0;
+
+  function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+  function hex(c) { return [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)]; }
+  function mix(a, b, t) { var A = hex(a), B = hex(b); return 'rgb(' + A.map(function (v, i) { return Math.round(v + (B[i] - v) * t); }).join(',') + ')'; }
+  function pal(stops, t) { var n = stops.length - 1, i = Math.min(n - 1, Math.floor(t * n)); return mix(stops[i], stops[i + 1], t * n - i); }
+  function pick(arr) { return arr[Math.floor(rand() * arr.length)]; }
+  function ease(t) { return 1 - Math.pow(1 - t, 3); }
+
+  var HEART_STOPS = ['#ff7aa2', '#ff8fab', '#ff9a7b', '#ffa352', '#ffc15e'];
+  var LAV = ['#9b7fd1', '#b49cf0', '#8566c9', '#a98be0'];
+  var ROSE = ['#e63e62', '#f0587a', '#ff7a93', '#d6336c', '#ff9bb0'];
+
+  function heartPath(ctx, x, y, s, rot) {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.beginPath();
+    ctx.moveTo(0, s * 0.35);
+    ctx.bezierCurveTo(-s * 0.7, -s * 0.1, -s * 0.4, -s * 0.6, 0, -s * 0.25);
+    ctx.bezierCurveTo(s * 0.4, -s * 0.6, s * 0.7, -s * 0.1, 0, s * 0.35);
+    ctx.fill(); ctx.restore();
+  }
+
+  function buildHearts() {
+    hearts = [];
+    var N = Math.round(clamp(1250 * Math.pow(K / 190, 2), 700, 1600));
+    while (hearts.length < N) {
+      var x = rand() * 2.5 - 1.25, y = rand() * 2.5 - 1.2;
+      var a = x * x + y * y - 1;
+      if (a * a * a - x * x * y * y * y > 0) continue;
+      var u = (x + 1.15) / 2.3, v = (y + 1) / 2.3;
+      var t = clamp(u * 0.5 + (1 - v) * 0.4 + (rand() - 0.5) * 0.45, 0, 1);
+      hearts.push({ px: cx + x * K, py: cy - (y - 0.1) * K, s: K * (0.05 + rand() * 0.045), rot: (rand() - 0.5) * 0.9, col: pal(HEART_STOPS, t), key: y + rand() * 0.4 });
+    }
+    hearts.sort(function (a, b) { return a.key - b.key; });
+    twinkles = [];
+    for (var i = 0; i < 16; i++) twinkles.push({ h: hearts[Math.floor(rand() * hearts.length)], ph: rand() * 6.28, r: 5 + rand() * 5 });
+  }
+
+  function makeLav(x, y, t0) {
+    var d = clamp((y - groundY) / (H - groundY), 0, 1), h = H * (0.07 + 0.12 * d) * (0.85 + rand() * 0.3);
+    return { kind: 'lav', x: x, y: y, d: d, h: h, lean: (rand() - 0.5) * h * 0.25, amp: 2 + d * 4, ph: rand() * 6.28, col: pick(LAV), t0: t0 };
+  }
+  function makeRose(x, y, t0) {
+    var d = clamp((y - groundY) / (H - groundY), 0, 1);
+    return { kind: 'rose', x: x, y: y, d: d, r: (11 + 19 * d) * clamp(W / 600, 0.75, 1.15), h: H * (0.045 + 0.08 * d), col: pick(ROSE), ph: rand() * 6.28, t0: t0 };
+  }
+  function makeDaisy(x, y, t0) {
+    var d = clamp((y - groundY) / (H - groundY), 0, 1);
+    return { kind: 'daisy', x: x, y: y, d: d, r: (7 + 9 * d) * clamp(W / 600, 0.8, 1.1), h: H * (0.035 + 0.05 * d), ph: rand() * 6.28, t0: t0 };
+  }
+  function make(kind, x, y, t0) { return kind === 'rose' ? makeRose(x, y, t0) : kind === 'lav' ? makeLav(x, y, t0) : makeDaisy(x, y, t0); }
+
+  function buildItems() {
+    items = [];
+    var zone = H - groundY, i;
+    var nl = clamp(Math.floor(W / 9), 40, 160);
+    for (i = 0; i < nl; i++) items.push(makeLav(rand() * W, groundY + 6 + Math.pow(rand(), 0.8) * zone * 0.95, -1e9));
+    var nr = clamp(Math.floor(W / 110) + 3, 4, 14);
+    for (i = 0; i < nr; i++) items.push(makeRose(rand() * W, groundY + 20 + rand() * zone * 0.85, -1e9));
+    var nd = clamp(Math.floor(W / 140), 3, 10);
+    for (i = 0; i < nd; i++) items.push(makeDaisy(rand() * W, groundY + 14 + rand() * zone * 0.85, -1e9));
+    planted.forEach(function (p) { items.push(make(p.kind, p.nx * W, p.ny * H, -1e9)); });
+    items.sort(function (a, b) { return a.y - b.y; });
+    petals = [];
+    for (i = 0; i < 26; i++) petals.push({ x: rand() * W, y: rand() * H, s: 4 + rand() * 4, vy: 0.3 + rand() * 0.5, vx: 0.2 + rand() * 0.4, rot: rand() * 6.28, vr: (rand() - 0.5) * 0.04, ph: rand() * 6.28 });
+  }
+
+  function layout() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    [back, front].forEach(function (c) { c.width = W * dpr; c.height = H * dpr; c.style.width = W + 'px'; c.style.height = H + 'px'; });
+    bctx.setTransform(dpr, 0, 0, dpr, 0, 0); fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    rand = mulberry(20240924);
+    groundY = H * 0.8; cx = W / 2; cw = Math.min(W * 0.78, H * 0.42, 500); cy = H * 0.26; K = cw / 2.3;
+    buildHearts(); buildItems(); paintBack();
+  }
+
+  function hill(fill, base, amp, freq, ph) {
+    bctx.beginPath(); bctx.moveTo(0, H);
+    for (var x = 0; x <= W + 8; x += 8) {
+      var f = Math.PI * 2 * freq / W;
+      bctx.lineTo(x, base + Math.sin(x * f + ph) * amp + Math.sin(x * f * 2.3 + ph * 1.7) * amp * 0.4);
+    }
+    bctx.lineTo(W, H); bctx.closePath(); bctx.fillStyle = fill; bctx.fill();
+  }
+
+  function paintTrunk() {
+    var baseY = groundY + H * 0.02, topY = cy + K * 0.45, w = K * 0.09;
+    bctx.lineCap = 'round'; bctx.lineJoin = 'round';
+    var cols = ['#5a2f3a', '#6e3a3f', '#85504a'];
+    for (var i = 0; i < 3; i++) {
+      bctx.strokeStyle = cols[i]; bctx.lineWidth = w * (1 - i * 0.3);
+      bctx.beginPath(); bctx.moveTo(cx, baseY); bctx.quadraticCurveTo(cx + K * 0.12, (baseY + topY) / 2, cx, topY); bctx.stroke();
+    }
+    bctx.strokeStyle = '#6e3a3f'; bctx.lineWidth = w * 0.4;
+    bctx.beginPath(); bctx.moveTo(cx, cy + K * 0.8); bctx.quadraticCurveTo(cx - K * 0.15, cy + K * 0.4, cx - K * 0.5, cy + K * 0.05); bctx.stroke();
+    bctx.beginPath(); bctx.moveTo(cx, cy + K * 0.75); bctx.quadraticCurveTo(cx + K * 0.15, cy + K * 0.35, cx + K * 0.5, cy); bctx.stroke();
+  }
+
+  function drawHeartObj(h) { bctx.fillStyle = h.col; heartPath(bctx, h.px, h.py, h.s, h.rot); }
+
+  function paintBack() {
+    bctx.clearRect(0, 0, W, H);
+    hill('#d46a7c', groundY - H * 0.05, H * 0.025, 1.3, 0.5);
+    hill('#b64f72', groundY - H * 0.02, H * 0.022, 1.8, 2.1);
+    var g = bctx.createLinearGradient(0, groundY, 0, H);
+    g.addColorStop(0, '#8a3d6b'); g.addColorStop(1, '#4a2050');
+    hill(g, groundY + H * 0.005, H * 0.015, 1.1, 4.0);
+    var cg = bctx.createRadialGradient(cx, cy, 0, cx, cy, cw * 0.75);
+    cg.addColorStop(0, 'rgba(255,180,160,.55)'); cg.addColorStop(1, 'rgba(255,180,160,0)');
+    bctx.fillStyle = cg; bctx.fillRect(0, 0, W, H);
+    paintTrunk();
+    for (var i = 0; i < progress; i++) drawHeartObj(hearts[i]);
+  }
+
+  function quad(p0, p1, p2, t) { var u = 1 - t; return u * u * p0 + 2 * u * t * p1 + t * t * p2; }
+
+  function drawLav(s, t, g) {
+    var sway = reduce ? 0 : Math.sin(t * 0.0012 + s.ph) * s.amp;
+    var x0 = s.x, y0 = s.y, x2 = s.x + s.lean + sway * g, y2 = s.y - s.h * g;
+    var x1 = s.x + s.lean * 0.4 + sway * 0.4 * g, y1 = s.y - s.h * 0.55 * g;
+    fctx.strokeStyle = mix('#5f8a52', '#7fae6c', 1 - s.d); fctx.lineWidth = 1.2 + s.d * 1.6; fctx.lineCap = 'round';
+    fctx.beginPath(); fctx.moveTo(x0, y0); fctx.quadraticCurveTo(x1, y1, x2, y2); fctx.stroke();
+    var n = 10;
+    for (var i = 0; i < n; i++) {
+      var f = i / (n - 1), tt = 0.45 + 0.55 * f;
+      var bx = quad(x0, x1, x2, tt), by = quad(y0, y1, y2, tt);
+      var size = (3 + 4 * s.d) * (1 - 0.55 * f) * g;
+      var side = (i % 2 ? 1 : -1) * size * 0.8;
+      fctx.fillStyle = i % 3 === 0 ? '#c9b6f7' : s.col;
+      fctx.beginPath(); fctx.ellipse(bx + side, by, size * 0.7, size * 1.1, side * 0.05, 0, 6.283); fctx.fill();
+    }
+  }
+
+  function drawRose(s, t, g) {
+    var sw = reduce ? 0 : Math.sin(t * 0.001 + s.ph) * (1.5 + s.d * 2.5) * g;
+    var hx = s.x + sw, hy = s.y - s.h * g;
+    fctx.strokeStyle = '#5f8a52'; fctx.lineWidth = 2 + s.d * 1.5; fctx.lineCap = 'round';
+    fctx.beginPath(); fctx.moveTo(s.x, s.y); fctx.quadraticCurveTo(s.x + sw * 0.3, (s.y + hy) / 2, hx, hy); fctx.stroke();
+    var my = s.y - s.h * g * 0.45, lx = s.x + sw * 0.15, lr = s.r * 0.75 * g;
+    fctx.fillStyle = '#6f9a5a';
+    fctx.beginPath(); fctx.ellipse(lx - lr * 0.7, my, lr * 0.8, lr * 0.32, -0.5, 0, 6.283); fctx.fill();
+    fctx.beginPath(); fctx.ellipse(lx + lr * 0.7, my - lr * 0.3, lr * 0.8, lr * 0.32, 0.5, 0, 6.283); fctx.fill();
+    var r = s.r * g, layers = 4;
+    for (var i = 0; i < layers; i++) {
+      var rr = r * (1 - i * 0.2);
+      fctx.fillStyle = mix(s.col, '#7a1030', i / layers * 0.75);
+      for (var p = 0; p < 5; p++) {
+        var a = p / 5 * 6.283 + i * 0.6;
+        fctx.beginPath(); fctx.ellipse(hx + Math.cos(a) * rr * 0.42, hy + Math.sin(a) * rr * 0.42, rr * 0.52, rr * 0.46, a, 0, 6.283); fctx.fill();
+      }
+    }
+    fctx.strokeStyle = 'rgba(60,0,24,.35)'; fctx.lineWidth = 1;
+    fctx.beginPath(); fctx.arc(hx, hy, r * 0.25, 0.5, 4.8); fctx.stroke();
+    fctx.beginPath(); fctx.arc(hx + r * 0.03, hy, r * 0.12, 3.4, 8); fctx.stroke();
+  }
+
+  function drawDaisy(s, t, g) {
+    var sw = reduce ? 0 : Math.sin(t * 0.0011 + s.ph) * (1 + s.d * 2) * g;
+    var hx = s.x + sw, hy = s.y - s.h * g, r = s.r * g;
+    fctx.strokeStyle = '#6f9a5a'; fctx.lineWidth = 1.6 + s.d; fctx.lineCap = 'round';
+    fctx.beginPath(); fctx.moveTo(s.x, s.y); fctx.quadraticCurveTo(s.x + sw * 0.3, (s.y + hy) / 2, hx, hy); fctx.stroke();
+    fctx.fillStyle = '#fff7ef';
+    for (var p = 0; p < 12; p++) {
+      var a = p / 12 * 6.283;
+      fctx.beginPath(); fctx.ellipse(hx + Math.cos(a) * r * 0.6, hy + Math.sin(a) * r * 0.6, r * 0.55, r * 0.2, a, 0, 6.283); fctx.fill();
+    }
+    fctx.fillStyle = '#f7b733'; fctx.beginPath(); fctx.arc(hx, hy, r * 0.3, 0, 6.283); fctx.fill();
+  }
+
+  function drawStar(x, y, r, a) {
+    fctx.fillStyle = 'rgba(255,252,235,' + a + ')';
+    fctx.beginPath();
+    fctx.moveTo(x, y - r); fctx.quadraticCurveTo(x, y, x + r, y); fctx.quadraticCurveTo(x, y, x, y + r);
+    fctx.quadraticCurveTo(x, y, x - r, y); fctx.quadraticCurveTo(x, y, x, y - r); fctx.fill();
+  }
+
+  function frame(now) {
+    if (progress < hearts.length) {
+      var step = reduce ? hearts.length : Math.ceil(hearts.length / 200), end = Math.min(hearts.length, progress + step);
+      for (var i = progress; i < end; i++) drawHeartObj(hearts[i]);
+      progress = end;
+    }
+    fctx.clearRect(0, 0, W, H);
+    for (var k = 0; k < items.length; k++) {
+      var s = items[k], g = ease(clamp((now - s.t0) / 1000, 0, 1));
+      if (g <= 0) continue;
+      if (s.kind === 'lav') drawLav(s, now, g); else if (s.kind === 'rose') drawRose(s, now, g); else drawDaisy(s, now, g);
+    }
+    if (progress >= hearts.length && !reduce) {
+      for (var q = 0; q < twinkles.length; q++) {
+        var tw = twinkles[q], a = Math.pow(Math.max(0, Math.sin(now / 500 + tw.ph)), 3);
+        if (a > 0.02) drawStar(tw.h.px, tw.h.py, tw.r * (0.6 + a * 0.6), a);
+      }
+    }
+    if (!reduce) {
+      for (var p = 0; p < petals.length; p++) {
+        var pt = petals[p];
+        pt.y += pt.vy; pt.x += pt.vx + Math.sin(now / 1200 + pt.ph) * 0.4; pt.rot += pt.vr;
+        if (pt.y > H + 10) { pt.y = -10; pt.x = Math.random() * W; }
+        if (pt.x > W + 10) pt.x = -10;
+        fctx.save(); fctx.translate(pt.x, pt.y); fctx.rotate(pt.rot);
+        fctx.fillStyle = 'rgba(255,170,190,.78)';
+        fctx.beginPath(); fctx.ellipse(0, 0, pt.s, pt.s * 0.6, 0, 0, 6.283); fctx.fill(); fctx.restore();
+      }
+    }
+    for (var b = bursts.length - 1; b >= 0; b--) {
+      var bu = bursts[b]; bu.x += bu.vx; bu.y += bu.vy; bu.life -= 0.012;
+      if (bu.life <= 0) { bursts.splice(b, 1); continue; }
+      fctx.globalAlpha = bu.life; fctx.fillStyle = bu.col; heartPath(fctx, bu.x, bu.y, bu.s, 0); fctx.globalAlpha = 1;
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* planting */
+  window.addEventListener('pointerdown', function (e) {
+    if (e.target.closest && e.target.closest('.card, .back-link')) return;
+    var x = e.clientX, y = e.clientY;
+    if (y < groundY + 14) y = groundY + 14 + Math.random() * (H - groundY) * 0.5;
+    var kind = kinds[kindIdx++ % kinds.length];
+    planted.push({ kind: kind, nx: x / W, ny: y / H });
+    items.push(make(kind, x, y, performance.now()));
+    items.sort(function (a, b) { return a.y - b.y; });
+    for (var i = 0; i < 7; i++) {
+      var a = Math.random() * 6.283;
+      bursts.push({ x: e.clientX, y: e.clientY, vx: Math.cos(a) * (0.6 + Math.random()), vy: -1 - Math.random() * 1.6, life: 1, s: 7 + Math.random() * 6, col: pal(HEART_STOPS, Math.random()) });
+    }
+    document.getElementById('hint').classList.add('gone');
+  });
+
+  var rt;
+  window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(layout, 120); });
+  layout();
+  requestAnimationFrame(frame);
+})();
+</script>
+
+<!-- Realtime Analytics Script -->
+<script src="tracker.js"></script>
+</body>
+</html>
