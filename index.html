@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>A Gift From Kaif</title>
+
+  <!-- Google Fonts & Tailwind CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="bg" aria-hidden="true"></div>
+  <div class="rays" aria-hidden="true"></div>
+  <div class="shade a" aria-hidden="true"><svg id="shadeA" viewBox="0 0 500 500"></svg></div>
+  <div class="shade b" aria-hidden="true"><svg id="shadeB" viewBox="0 0 500 500"></svg></div>
+  <canvas id="petals" aria-hidden="true"></canvas>
+
+  <!-- Top-Right Navigation Link -->
+  <a class="top-nav-link" href="garden.html">
+    <span>Go to Garden</span>
+    <span>&rarr;</span>
+  </a>
+
+  <main class="stage">
+    <header class="head">
+      <p class="eyebrow in" style="--d:.05s">a little reminder</p>
+      <h1 id="hey" aria-label="hey !!"></h1>
+      <p class="lead in" style="--d:.7s">Mohd Kaif send you something !!</p>
+    </header>
+
+    <div class="photo in" style="--d:.5s">
+      <div class="tilt" id="tilt">
+        <div class="polaroid" id="polaroid" role="button" tabindex="0" aria-label="Tap the photo">
+          <span class="tape" aria-hidden="true"></span>
+          
+          <div class="frame">
+            <svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs>
+                <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#ffe3a8"/>
+                  <stop offset=".55" stop-color="#f5a869"/>
+                  <stop offset="1" stop-color="#c97a56"/>
+                </linearGradient>
+                <radialGradient id="sunG" cx=".5" cy=".5" r=".5">
+                  <stop offset="0" stop-color="#fffbe8"/>
+                  <stop offset=".35" stop-color="#ffe9a8" stop-opacity=".9"/>
+                  <stop offset="1" stop-color="#ffd08a" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <rect width="300" height="300" fill="url(#sky)"/>
+              <circle cx="205" cy="128" r="100" fill="url(#sunG)"/>
+              <circle cx="205" cy="128" r="22" fill="#fff6d6"/>
+              <path d="M0 172 Q60 142 120 167 T300 152 V300 H0Z" fill="#8a6a3a" opacity=".55"/>
+              <path d="M0 204 Q80 178 160 198 T300 188 V300 H0Z" fill="#5f4a22"/>
+              <g id="stems"></g>
+            </svg>
+          </div>
+
+          <p class="cap" id="cap">sunlit shadows</p>
+
+          <svg class="bouq" viewBox="0 0 140 190" aria-hidden="true">
+            <g stroke="#6f7f4f" stroke-width="3" stroke-linecap="round" fill="none">
+              <path d="M70 188 Q60 130 40 70"/><path d="M70 188 Q72 120 78 50"/>
+              <path d="M70 188 Q88 130 112 80"/><path d="M70 188 Q50 150 22 128"/>
+            </g>
+            <g fill="#8a9b62">
+              <ellipse cx="52" cy="128" rx="16" ry="6" transform="rotate(-38 52 128)"/>
+              <ellipse cx="92" cy="130" rx="16" ry="6" transform="rotate(34 92 130)"/>
+              <ellipse cx="62" cy="96" rx="12" ry="5" transform="rotate(-50 62 96)"/>
+            </g>
+            <g transform="translate(40 66)">
+              <circle r="18" fill="#e8b6a4"/><circle r="12" fill="#d99a89"/><circle r="6" fill="#c4806f"/>
+              <path d="M-9 -2 Q0 -12 9 -2" stroke="#b86f60" stroke-width="1.4" fill="none"/>
+            </g>
+            <g transform="translate(78 46)"><circle r="15" fill="#f1cbb8"/><circle r="10" fill="#e3a592"/><circle r="5" fill="#cf8a77"/></g>
+            <g transform="translate(112 78)"><circle r="13" fill="#e8b6a4"/><circle r="8.5" fill="#d99a89"/><circle r="4" fill="#c4806f"/></g>
+            <g fill="#f6e8c9">
+              <circle cx="22" cy="106" r="3.2"/><circle cx="30" cy="98" r="2.6"/><circle cx="16" cy="96" r="2.4"/>
+              <circle cx="104" cy="52" r="3"/><circle cx="114" cy="44" r="2.4"/><circle cx="96" cy="40" r="2.2"/>
+            </g>
+            <g fill="#a68bd6">
+              <ellipse cx="60" cy="38" rx="3" ry="5"/><ellipse cx="64" cy="28" rx="3" ry="5"/>
+              <ellipse cx="68" cy="19" rx="2.6" ry="4.5"/><ellipse cx="56" cy="46" rx="3" ry="5"/>
+            </g>
+            <path d="M52 168 Q70 176 88 166 L84 180 Q70 190 56 182Z" fill="#e7d4a6"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation CTA -->
+    <div class="action">
+      <a id="go" href="garden.html" class="cta in" style="--d:1s">
+        <span>Open Next Page</span>
+        <svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6"/>
+        </svg>
+      </a>
+      <p class="tip in" style="--d:1.2s">psst, tap the photo</p>
+    </div>
+  </main>
+
+  <div id="flash" aria-hidden="true"></div>
+
+  <!-- Page Interactivity Script -->
+  <script>
+  (function () {
+    var NS = 'http://www.w3.org/2000/svg';
+    var root = document.documentElement;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var W = window.innerWidth, H = window.innerHeight;
+    function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+    function el(n, a) { var e = document.createElementNS(NS, n); for (var k in a) e.setAttribute(k, a[k]); return e; }
+    function lcg(s) { return function () { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; }; }
+
+    /* Headline animation */
+    var h1 = document.getElementById('hey');
+    'hey !!'.split('').forEach(function (c, i) {
+      var s = document.createElement('span');
+      s.className = 'ch'; s.style.setProperty('--i', i);
+      s.setAttribute('aria-hidden', 'true');
+      s.textContent = c === ' ' ? ' ' : c;
+      h1.appendChild(s);
+    });
+
+    /* Leaf shadows */
+    function leaf(x, y, L, ang) {
+      return el('path', { d: 'M0 0 C ' + L * .3 + ' ' + (-L * .42) + ', ' + L * .8 + ' ' + (-L * .38) + ', ' + L + ' 0 C ' + L * .8 + ' ' + L * .38 + ', ' + L * .3 + ' ' + L * .42 + ', 0 0Z',
+        transform: 'translate(' + x + ' ' + y + ') rotate(' + ang + ')', fill: '#2e2b1b' });
+    }
+    function branch(svg, x, y, len, rot, n, r) {
+      var g = el('g', { transform: 'translate(' + x + ' ' + y + ') rotate(' + rot + ')' }), curve = len * 0.14;
+      g.appendChild(el('path', { d: 'M0 0 Q ' + len / 2 + ' ' + (-curve) + ' ' + len + ' 0', fill: 'none', stroke: '#2e2b1b', 'stroke-width': 3, 'stroke-linecap': 'round' }));
+      for (var i = 0; i < n; i++) {
+        var t = (i + 0.6) / (n + 0.2), px = len * t, py = -2 * curve * t * (1 - t);
+        var L = len * 0.2 * (1 - 0.45 * t) * (0.8 + r() * 0.5), side = i % 2 ? 1 : -1;
+        g.appendChild(leaf(px, py, L, side * (38 + r() * 30)));
+      }
+      g.appendChild(leaf(len, 0, len * 0.12, 0));
+      svg.appendChild(g);
+    }
+    var ra = lcg(7), rb = lcg(21);
+    var sa = document.getElementById('shadeA'), sb = document.getElementById('shadeB');
+    branch(sa, -20, 40, 430, 18, 11, ra); branch(sa, -20, 130, 370, 40, 10, ra); branch(sa, 40, -10, 390, 72, 9, ra);
+    branch(sb, 520, 470, 430, -168, 11, rb); branch(sb, 520, 370, 370, -146, 10, rb); branch(sb, 460, 520, 350, -108, 9, rb);
+
+    /* Meadow flowers */
+    var stems = document.getElementById('stems'), rs = lcg(99);
+    var bloom = ['#fff3dc', '#ffd6b0', '#f8e3a1', '#e8c9ef', '#ffffff'];
+    for (var i = 0; i < 30; i++) {
+      var x = 6 + rs() * 288, hgt = 36 + rs() * 90, lean = (rs() - 0.5) * 26, near = rs() > 0.55;
+      var y0 = 300, y1 = 300 - hgt;
+      stems.appendChild(el('path', { d: 'M' + x + ' ' + y0 + ' Q ' + (x + lean * 0.3) + ' ' + (y0 - hgt * 0.5) + ' ' + (x + lean) + ' ' + y1, stroke: near ? '#2f2a12' : '#4a3b1a', 'stroke-width': near ? 2 : 1.4, fill: 'none', 'stroke-linecap': 'round' }));
+      var c = bloom[Math.floor(rs() * bloom.length)], r = near ? 5 : 3.4;
+      for (var p = 0; p < 6; p++) {
+        var a = p / 6 * 6.283;
+        stems.appendChild(el('circle', { cx: (x + lean + Math.cos(a) * r * 0.9).toFixed(1), cy: (y1 + Math.sin(a) * r * 0.9).toFixed(1), r: (r * 0.62).toFixed(1), fill: c, opacity: near ? 1 : 0.9 }));
+      }
+      stems.appendChild(el('circle', { cx: x + lean, cy: y1, r: (r * 0.5).toFixed(1), fill: '#e08a3c' }));
+    }
+
+    /* Floating petals */
+    var cv = document.getElementById('petals'), ctx = cv.getContext('2d'), dpr = 1;
+    var COLS = ['#f4d6c4', '#ecc0a8', '#fbeccd', '#c9d5b3', '#e9b4a3'];
+    var amb = [], parts = [];
+    function mk(top) {
+      return { x: Math.random() * W, y: top ? -20 - Math.random() * 60 : Math.random() * H, s: 4 + Math.random() * 5, vy: .3 + Math.random() * .5, vx: .15 + Math.random() * .3,
+               r: Math.random() * 6.28, vr: (Math.random() - .5) * .04, ph: Math.random() * 6.28, c: COLS[Math.floor(Math.random() * COLS.length)] };
+    }
+    function size() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2); W = window.innerWidth; H = window.innerHeight;
+      cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      amb = []; var n = reduce ? 0 : Math.round(Math.min(18, W / 30));
+      for (var i = 0; i < n; i++) amb.push(mk(false));
+    }
+    size(); window.addEventListener('resize', size);
+    function petal(p, a) {
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.globalAlpha = a; ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.ellipse(0, 0, p.s, p.s * 0.55, 0, 0, 6.283); ctx.fill(); ctx.restore();
+    }
+    function tick(t) {
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < amb.length; i++) {
+        var p = amb[i];
+        p.y += p.vy; p.x += p.vx + Math.sin(t / 1200 + p.ph) * 0.4; p.r += p.vr;
+        if (p.y > H + 12 || p.x > W + 12) { amb[i] = mk(true); continue; }
+        petal(p, 0.8);
+      }
+      for (var j = parts.length - 1; j >= 0; j--) {
+        var q = parts[j];
+        q.x += q.vx; q.y += q.vy; q.vy += 0.06; q.vx *= 0.99; q.r += q.vr; q.life -= 0.014;
+        if (q.life <= 0) { parts.splice(j, 1); continue; }
+        petal(q, Math.min(1, q.life * 1.5));
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    function burst(x, y, n) {
+      for (var i = 0; i < n; i++) {
+        var a = Math.random() * 6.283, v = 1.5 + Math.random() * 4.5, p = mk(false);
+        p.x = x; p.y = y; p.vx = Math.cos(a) * v; p.vy = Math.sin(a) * v - 2.2; p.s = 4 + Math.random() * 6; p.life = 1;
+        parts.push(p);
+      }
+    }
+
+    /* 3D tilt */
+    var tilt = document.getElementById('tilt');
+    function move(nx, ny) {
+      root.style.setProperty('--px', nx.toFixed(3)); root.style.setProperty('--py', ny.toFixed(3));
+      tilt.style.setProperty('--tx', (nx * 7).toFixed(2)); tilt.style.setProperty('--ty', (-ny * 7).toFixed(2));
+    }
+    if (!reduce) {
+      window.addEventListener('pointermove', function (e) { move((e.clientX / W - 0.5) * 2, (e.clientY / H - 0.5) * 2); });
+      window.addEventListener('deviceorientation', function (e) {
+        if (e.gamma == null || e.beta == null) return;
+        move(clamp(e.gamma / 25, -1, 1), clamp((e.beta - 45) / 25, -1, 1));
+      });
+    }
+
+    /* Tap polaroid interaction */
+    var pol = document.getElementById('polaroid'), cap = document.getElementById('cap');
+    var phrases = ['sunlit shadows', 'a quiet kind of glow', 'you matter more than you know', 'just for you'], pi = 0;
+    function poke(x, y) {
+      pol.classList.remove('bump'); void pol.offsetWidth; pol.classList.add('bump');
+      burst(x, y, 28);
+      pi = (pi + 1) % phrases.length;
+      cap.style.opacity = 0;
+      setTimeout(function () { cap.textContent = phrases[pi]; cap.style.opacity = 1; }, 220);
+    }
+    pol.addEventListener('click', function (e) { var b = pol.getBoundingClientRect(); poke(e.detail ? e.clientX : b.left + b.width / 2, e.detail ? e.clientY : b.top + b.height / 2); });
+    pol.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); var b = pol.getBoundingClientRect(); poke(b.left + b.width / 2, b.top + b.height / 2); } });
+
+    /* Dynamic Button Transition */
+    var go = document.getElementById('go'), flash = document.getElementById('flash'), leaving = false;
+    if (!reduce && window.matchMedia('(hover: hover)').matches) {
+      go.addEventListener('pointermove', function (e) {
+        var b = go.getBoundingClientRect();
+        go.style.transform = 'translate(' + ((e.clientX - b.left - b.width / 2) * 0.12).toFixed(1) + 'px,' + ((e.clientY - b.top - b.height / 2) * 0.22).toFixed(1) + 'px)';
+      });
+      go.addEventListener('pointerleave', function () { go.style.transform = ''; });
+    }
+    go.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (leaving) return;
+      leaving = true;
+
+      var destination = go.getAttribute('href') || 'garden.html';
+      var b = go.getBoundingClientRect(), x = e.clientX, y = e.clientY;
+      if (!e.detail) { x = b.left + b.width / 2; y = b.top + b.height / 2; }
+      
+      var rp = document.createElement('span'), d = Math.max(b.width, b.height) * 2;
+      rp.className = 'ripple'; rp.style.width = rp.style.height = d + 'px';
+      rp.style.left = (x - b.left - d / 2) + 'px'; rp.style.top = (y - b.top - d / 2) + 'px';
+      go.appendChild(rp);
+      
+      burst(x, y, 50);
+      flash.style.setProperty('--x', x + 'px'); flash.style.setProperty('--y', y + 'px');
+      requestAnimationFrame(function () { flash.classList.add('on'); });
+      setTimeout(function () { window.location.href = destination; }, reduce ? 50 : 950);
+    });
+  })();
+  </script>
+
+  <!-- Realtime Analytics Script -->
+  <script src="tracker.js"></script>
+</body>
+</html>
